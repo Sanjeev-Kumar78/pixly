@@ -11,7 +11,6 @@ Pixly - Your AI Gaming Assistant 🎮
 
 </div>
 
-
 Pixly is a desktop overlay that acts as your gaming assistant, combining AI chat with automated, privacy-friendly screenshot capture and a game-specific Retrieval-Augmented Generation (RAG) knowledge base. Pixly detects what game you're playing, retrieves relevant, curated knowledge (wikis, user-supplied YouTube descriptions, and forum posts) via a local vector database, and grounds Gemini responses on those sources.
 
 Make sure to star our repository, your support is much appreciated.
@@ -19,6 +18,7 @@ Make sure to star our repository, your support is much appreciated.
 >[!IMPORTANT]
 > 🎃 Hacktoberfest 2025 Participant
 > Please make sure to [star this repo](https://github.com/keploy/keploy).
+>
 ## 📋 Table of Contents
 
 - [📋 Table of Contents](#-table-of-contents)
@@ -45,7 +45,6 @@ Make sure to star our repository, your support is much appreciated.
 - 📖 For Contributing Visit [CONTRIBUTING.md](https://github.com/MLSAKIIT/pixly/blob/main/CONTRIBUTING.md)
 - ⚙️ For Setup and Installation visit [INSTALL.md](https://github.com/MLSAKIIT/pixly/blob/main/INSTALL.md)
 
-
 ## 🎮 What Pixly Does
 
 - 🤖 Intelligent, game-focused chat using Google Gemini with a "Game Expert" system prompt
@@ -54,18 +53,19 @@ Make sure to star our repository, your support is much appreciated.
 - 🔍 RAG pipeline over per-game CSV knowledge with local vector search (Chroma)
 - 💻 Modern desktop overlay for chatting, settings, and screenshot gallery
 
-
 ## 🏗️ Architecture Overview
 
 Pixly is organized into three main layers: UI Overlay, Backend API, and AI/RAG services, all running locally.
 
 ### 1) UI Overlay (`overlay.py`)
+
 - CustomTkinter-based floating overlay, always-on-top, draggable
 - Chat window with typing indicator and styled messages (user vs assistant)
 - Settings window to manage screenshot capture and set the Google API key (persisted to `.env` via backend)
 - Screenshot gallery with View and Delete actions
 
 ### 2) Backend API (`backend/`)
+
 - FastAPI server exposes HTTP endpoints on 127.0.0.1:8000
 - Responsibilities:
   - Route chat requests to Gemini
@@ -76,6 +76,7 @@ Pixly is organized into three main layers: UI Overlay, Backend API, and AI/RAG s
   - Manage API key configuration (.env persistence + live reconfigure)
 
 Key modules:
+
 - `backend/backend.py`: API endpoints and routing
 - `backend/chatbot.py`: Gemini client configuration, runtime reconfigure, and chat logic (with RAG context injection)
 - `backend/screenshot.py`: Encrypted screenshot capture and storage; database operations; delete support
@@ -84,6 +85,7 @@ Key modules:
 - `backend/vector_service.py`: Chroma persistent client, collection management, chunking, embeddings, and semantic queries
 
 ### 3) AI & RAG Layer
+
 - Model: `Google Gemini 2.5 Flash Lite` for responses
 - System prompt (`PROMPTS.txt`) defines "Game Expert" persona and instructs grounding answers in retrieved snippets (WIKI / YOUTUBE / FORUM) with URLs
 - Vector DB: `Chroma` (persistent on disk in `vector_db/`)
@@ -106,6 +108,7 @@ wiki,wiki_desc,youtube,yt_desc,forum,forum_desc
 - **forum_desc**: Contributor-provided description of the forum URL
 
 Processing pipeline per game:
+
 1. Load CSV for the game (e.g., `games_info/minecraft.csv`)
 2. Extract text from wiki and forum URLs; keep YouTube descriptions as-is
 3. Clean and chunk text into manageable segments (e.g., ~512 tokens)
@@ -117,6 +120,7 @@ Vector DB collections are organized by game and source type, e.g. `minecraft_wik
 ## 🎯 Game Detection
 
 Pixly uses a layered strategy to infer the current game:
+
 - **Process Detection**: Scans running processes for known executables
 - **Screenshot Context**: Uses recent screenshot metadata (app/window) when available
 - **Manual Override**: Detects game mentions in the user's message (e.g., "I'm playing Minecraft")
@@ -183,6 +187,7 @@ pixly/
 - **System**: psutil + pywin32 for Windows process/window info; Pillow for imaging
 
 Notes:
+
 - The embedding model is configurable; by default we use a sentence-transformers model suitable for local inference. The system can be switched to a different embedder (e.g., Mistral embeddings) with minor changes in `vector_service.py`.
 - The persona and grounding behavior are controlled by `PROMPTS.txt` so Gemini cites sources from retrieved snippets and focuses answers on gaming topics.
 
