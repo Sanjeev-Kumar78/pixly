@@ -52,7 +52,7 @@ class VectorService:
         if not self.chroma_client:
             return None
         
-        collection_name = f"{game_name}_{content_type}"
+        collection_name = f"{game_name.lower()}_{content_type.lower()}"
         
         try:
             # Try to get existing collection
@@ -63,7 +63,7 @@ class VectorService:
             # Collection doesn't exist, create it
             try:
                 collection = self.chroma_client.create_collection(
-                    name=collection_name,
+                    name=collection_name.lower(),
                     metadata={"game": game_name, "content_type": content_type}
                 )
                 self.collections[collection_name] = collection
@@ -197,7 +197,7 @@ class VectorService:
             
             # Search each content type
             for content_type in content_types:
-                collection_name = f"{game_name}_{content_type}"
+                collection_name = f"{game_name.lower()}_{content_type.lower()}"
                 
                 if collection_name in self.collections:
                     collection = self.collections[collection_name]

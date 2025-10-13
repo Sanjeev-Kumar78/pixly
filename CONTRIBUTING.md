@@ -31,9 +31,8 @@ This document contains the list of issues, suggestions and improvements that can
 
 Adhere to [Hacktober Fest Guidelines](https://hacktoberfest.com/) and maintain common etiquette of contributing to an open source project.
 
-If you have any questions regarding contributing to this repository please contact the contributor.
+All contributors are requested to join this [WhatsApp Group](https://chat.whatsapp.com/L1NrQcgCFWw95FRbytqIJ3) for all forms of communication regarding contributing to this repository. 
 
-<!-- (link to the whatsapp group) -->
 ### List of major issues
 >
 >[!IMPORTANT]
@@ -44,7 +43,7 @@ If you have any questions regarding contributing to this repository please conta
 1. Make the window resizable and all window elements scalable.
 2. Add window control buttons for minimise and fullscreen (to be added after the previous implementation)
 3. Whenever you hover over the screenshot button, placeholder text is inserted in the chat box but it doesn't go away after you stop hovering, and you have to manually press backspace to remove the text.
-4. Refactor the codebase of the overlay modular so that it is easier to work with.
+4. After adding your API Key from the overlay, once the overlay is closed and reopened later, it stops showing the placeholder text that your key has been added. Make the placeholder text persistent across sessions.
 
 #### Frontend+Backend :-
 
@@ -52,9 +51,9 @@ If you have any questions regarding contributing to this repository please conta
 
 >[!TIP]
 > Here is a suggested solution:
-Store the chats of the user in a database, (we are already using sqlite for screenshots, might as well use it), then when we give a new prompt to gemini, old chats are added to the prompt.
+Store the recent chats of the user in a database, (we are already using ChromaDB, might as well use it), then when we give a new prompt to gemini, old chats are added to the prompt.
 
-- Only store the last 30 chats or so.
+- Only store the last 30 (or user specified) chats or so.
 - Every game will have its own database table, i.e. chats are stored on a per game basis.
 - Additional meta-data such as timestamp should also be stored so when user asked "What did I do yesterday?" it should be able to retrieve the screenshot from 24 hours ago etc.
 
@@ -67,45 +66,52 @@ Store the chats of the user in a database, (we are already using sqlite for scre
 
 #### Backend :-
 
-1. Chroma db vector collections aren't searched properly, this may have to do with the chroma client not being initialised properly or the collections are not being created properly in `get_or_create_collection()` or the incorrect implementation of `search_knowledge()` in *vector_service.py*. This issue requires a more thorough investigation.
-2. Web Scrapper in *knowledge_manager.py* sometimes gets blocked by certain websites, (*namely* the ones present in *minecraft.csv*)
+1. Web Scrappers in *knowledge_manager.py*, `extract_wiki_content()` and `extract_forum_content()`
+sometimes gets blocked by certain websites, (*namely* the ones present in *minecraft.csv*)
 
 >[!TIP]
 > Recommended Solutions :
-
+- Mask the scrappers to behave to more like human by introducing delays between different searches. 
 - Use Proxies to circumvent IP bans.
 - Rotate a list of User Agents and headers.
 - Make it asynchronous using `asyncio + httpx`
 
 ## List of Improvements and Suggestions
->
+
 >[!TIP]
 > Feel free to give us any of your ideas, suggestions and feedback to add to this list.
+1. **Youtube Video Indexing :**
+Add the ability to index the description, audio transcriptions, titles and tags of youtube videos and recommend them to the user for a given prompt, from the list of videos in the CSV file.
+
+>[!IMPORTANT]
+> UI/UX Addition :
+> - Add the ability to play the video within the overlay itself.
+> - Add basic features play, pause and other functionalities.
+
 
 ### Improvements to the UI
 
-1. Add Markdown support for Gemini's responses.
+1. Add **Markdown support** for Gemini's responses.
 2. Improve the chat Window UI such that it is easier to tell apart the messages of the user and Pixly.
-3. Add the ability to view images results from the web and play recommended youtube videos directly within the overlay.
+3. Add the ability to view **images results from the web**.
+4. 
 
 #### Long-term Goals
 
-1. Add the ability for users to add custom themes of the overlay, different themes belonging to different games, so when the overlay can automatically apply a certain theme when a particular game is detected.
+1. Add the ability for users to add **Custom Themes** of the overlay, different themes belonging to different games, so when the overlay can automatically apply a certain theme when a particular game is detected.
 
 ### Improvements to Backend :-
 
 1. Add more .csv entries about wikis, guides, youtube videos, forum posts about more games, especially single  player story based titles like `Elden Ring, Hollow Knight : Silksong, Black Myth: Wukong,Cyberpunk 2077`
-2. Implement a Better way to store screenshots:
+2. Implement a better way to store screenshots:
 
 >[!TIP]
 > Suggested Improvements :
 
-- Vectorise the screenshots as well.
+- Vectorise the screenshots as well, and store them in ChromaDB (make sure the content is encrypted as well)
 - Add tool calling for the agent to call a tool to retrieve the screenshot from a specific time or from a specific game.
 
-1. Improve the Web Scrapper :
-
-In Addition to fixing the above issues, add the ability to scrape youtube audio transcriptions.
+2. Add the ability for gemini to automatically perform web searches in case the query that the user is searching isn't present in the data base. If gemini finds said data then it adds to the vector db for future use.
 
 ### Long term Goals
 
@@ -125,4 +131,4 @@ In the future we may wanna add cross platform compatibility with Linux.
 
 1. Overlay hangs and then crashes when turning off the *enable screenshots setting.*
 2. `game_detection.py`, it reports the incorrect game being detected, in some cases.
-3. After adding your API Key from the overlay, sometimes it shows that the user has added their key, sometimes it doesn't.
+

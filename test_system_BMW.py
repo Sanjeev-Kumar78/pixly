@@ -91,7 +91,6 @@ def main():
         search_data = {
             "game_name": "Black Myth Wukong",
             "query": query,
-            "limit": 3
         }
         result = test_api_endpoint("/games/Black_Myth_Wukong/knowledge/search", "POST", search_data)
         if result.get("status_code") == 200:

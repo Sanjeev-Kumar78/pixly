@@ -23,7 +23,7 @@ def set_api_key(new_key: str):
         os.environ['GOOGLE_API_KEY'] = new_key
         genai.configure(api_key=new_key)
         global model
-        model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", system_instruction=system_prompt)
+        model = genai.GenerativeModel(model_name="gemini-2.5-flash", system_instruction=system_prompt)
         return True
     except Exception as e:
         print(f"Error setting API key: {e}")
@@ -88,11 +88,11 @@ async def chat_with_gemini(message: str, image_data: str = None):
             
             # Add game context and knowledge if detected
             if detected_game:
-                enhanced_message += f"\n\nDETECTED GAME: {detected_game.upper()}"
+                enhanced_message += f"\n\nDETECTED GAME: {detected_game.lower()}"
                 
                 # Search for relevant knowledge
                 try:
-                    knowledge_results = search_knowledge(detected_game, message, limit=3)
+                    knowledge_results = search_knowledge(detected_game, message)
                     
                     if knowledge_results:
                         knowledge_context = "\n\nRELEVANT KNOWLEDGE FROM GAME DATABASE:\n"
